@@ -31,6 +31,7 @@ print('-' * 75, '\n')
 
 # Gráfico Rating vs Votes
 print("Gerando gráfico: Rating vs Votes...")
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.4,3.8), dpi=150)
 sns.scatterplot(x='RATING', y='VOTES', data=fandango)
@@ -63,6 +64,7 @@ print('-' * 75, '\n')
 
 # Gráfico de contagem por ano
 print("Gerando gráfico: Contagem por ano...\n")
+print('-' * 75, '\n')
 
 plt.figure(dpi=125)
 sns.countplot(
@@ -100,6 +102,7 @@ fan_reviewed = fandango[fandango['VOTES']>0].copy()
 
 # Gerando KDE plot
 print("Gerando gráfico KDE de Rating vs Stars...\n")
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.8, 3.4), dpi=125)
 
@@ -143,6 +146,7 @@ print('-' * 75, '\n')
 
 # Gráfico de contagem da diferença
 print("Gerando gráfico: Contagem de STARS_DIFF...\n")
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.8,3.4), dpi=125)
 
@@ -187,7 +191,8 @@ print('-' * 75, '\n')
 
 
 # Gráfico RottenTomatoes vs Usuarios
-print("Gerando gráfico: Crítica vs Usuários...\n")
+print("Gerando gráfico RottenTomatoes: Crítica vs Usuários...\n")
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.8,3.4), dpi=125)
 sns.scatterplot(data=all_sites,x='RottenTomatoes', y='RottenTomatoes_User')
@@ -198,6 +203,7 @@ plt.show()
 
 # Calculando diferença absoluta média
 print("Calculando diferença absoluta média entre crítica e usuários...")
+print('-' * 75, '\n')
 
 all_sites['Rotten_Diff'] = all_sites['RottenTomatoes'] - all_sites['RottenTomatoes_User']
 
@@ -211,6 +217,7 @@ print('-' * 75, '\n')
 
 # Gráfico de Distribição de Rotten_Diff
 print('Gerando gráfico: Distribição de Rotten_Diff...\n')
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.8,3.4), dpi=125)
 
@@ -229,6 +236,7 @@ plt.show()
 
 # Gráfico de Distribição Absoluta de Rotten_Diff
 print('Gerando gráfico: Distribição Absoluta de Rotten_Diff...\n')
+print('-' * 75, '\n')
 
 plt.figure(figsize=(6.8,3.4), dpi=125)
 
@@ -242,7 +250,7 @@ sns.histplot(
 )
 
 plt.title('Abs Diference between RT Critics Score and RT User Score')
-plt.savefig('plots/Abs_RT_critics_minus_RT_users.jpg')
+plt.savefig('plots/abs_RT_critics_minus_RT_users.jpg')
 plt.show()
 
 
@@ -260,4 +268,44 @@ print(
 )
 print('-' * 75)
 print(all_sites.nlargest(5,'Rotten_Diff'))
+print('-' * 75, '\n')
+
+
+# Gráfico de Distribuição Metacritic vs MetaCritc User
+print("Gerando gráfico Metacritic: Crítica vs Usuários...\n")
+print('-' * 75, '\n')
+
+plt.figure(figsize=(6.8,3.4), dpi=125)
+sns.scatterplot(data=all_sites,x='Metacritic', y='Metacritic_User')
+plt.xlim(0,100)
+plt.ylim(0,10)  
+plt.savefig('plots/MC_critic_vs_users.jpg')
+plt.show()
+
+
+# Gráfico de Distribuição Contagem de Votos IMDB vs MetaCritc
+print("Gerando gráfico Contagem de Votos: IMDB vs MetaCritc...\n")
+print('-' * 75, '\n')
+
+plt.figure(figsize=(6.8,3.4), dpi=125)
+sns.scatterplot(
+    data=all_sites,
+    x='Metacritic_user_vote_count', 
+    y='IMDB_user_vote_count'
+) 
+plt.savefig('plots/user_vote_count_Metacritic_vs_IMDB.jpg')
+plt.show()
+
+
+# O Filme com a maior quantidade de votos no IMDB
+print("Filme com mais votos no IMDB\n")
+print('-' * 75)
+print(all_sites.nlargest(1,'IMDB_user_vote_count'))
+print('-' * 75, '\n')
+
+
+# O Filme com a maior quantidade de votos no Metacritic
+print("Filme com mais votos no Metacritic\n")
+print('-' * 75)
+print(all_sites.nlargest(1,'Metacritic_user_vote_count'))
 print('-' * 75, '\n')
