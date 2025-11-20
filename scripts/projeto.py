@@ -48,7 +48,6 @@ print('-' * 75, '\n')
 # Extraindo ano do título
 print('Extraindo ano do título...')
 fandango['YEAR'] = fandango['FILM'].str.extract(r'\((\d{4})\)').astype(int)
-fandango['FILM'] = fandango['FILM'].str.replace(r'\s*\(\d{4}\)', '',regex=True)
 
 print('-' * 75)
 print(fandango.head())
@@ -308,4 +307,52 @@ print('-' * 75, '\n')
 print("Filme com mais votos no Metacritic\n")
 print('-' * 75)
 print(all_sites.nlargest(1,'Metacritic_user_vote_count'))
+print('-' * 75, '\n')
+
+
+
+# Mesclagem interna entre os df's fandango e all_sites baseando-se em 'FILM'
+
+df_fan_sites = pd.merge(fandango,all_sites,on='FILM',how='inner')
+
+print('Novo DataFrame: Dados mesclados (fandango + outros sites)')
+print('Infos:')
+print('-' * 75)
+print(df_fan_sites.info())
+print('-' * 75, '\n')
+
+print('Exibição das 5 primeiras linhas do DataFrame')
+print('-' * 75)
+print(df_fan_sites.head())
+print('-' * 75, '\n')
+
+
+
+# Normalizando colunas para ESTRELAS e AVALIAÇÕES do fandango
+
+# Normalizando RottenTomatoes
+df_fan_sites['RT_Norm'] = np.round(df_fan_sites['RottenTomatoes']/20,1)
+df_fan_sites['RTU_Norm'] = np.round(df_fan_sites['RottenTomatoes_User']/20,1)
+
+# Normalizando Metacritic
+df_fan_sites['Meta_Norm'] = np.round(df_fan_sites['Metacritic']/20,1)
+df_fan_sites['Meta_U_Norm'] = np.round(df_fan_sites['Metacritic_User']/2,1)
+
+# Normalizando IMDB
+df_fan_sites['IMDB_Norm'] = np.round(df_fan_sites['IMDB']/2,1)
+
+print('DataFrame com as notas normalizadas para o formato do fandango')
+print('-' * 75)
+print(df_fan_sites.head())
+print('-' * 75, '\n')
+
+
+# DataFrame das notas normalizadas
+norm_scores = df_fan_sites[
+    ['STARS','RATING','RT_Norm','RTU_Norm','Meta_Norm','Meta_U_Norm','IMDB_Norm']
+]
+
+print('Tabela das Notas Normalizadas')
+print('-' * 75)
+print(norm_scores.head())
 print('-' * 75, '\n')
