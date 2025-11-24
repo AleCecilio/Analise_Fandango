@@ -65,7 +65,7 @@ print('-' * 75, '\n')
 print("Gerando gráfico: Contagem por ano...\n")
 print('-' * 75, '\n')
 
-plt.figure(dpi=125)
+plt.figure(dpi=150)
 sns.countplot(
     data=fandango, 
     x='YEAR',
@@ -103,7 +103,7 @@ fan_reviewed = fandango[fandango['VOTES']>0].copy()
 print("Gerando gráfico KDE de Rating vs Stars...\n")
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8, 3.4), dpi=125)
+plt.figure(figsize=(6.8, 3.4), dpi=150)
 
 sns.kdeplot(
     data=fan_reviewed,
@@ -147,7 +147,7 @@ print('-' * 75, '\n')
 print("Gerando gráfico: Contagem de STARS_DIFF...\n")
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 
 sns.countplot(
     data=fan_reviewed, 
@@ -193,7 +193,7 @@ print('-' * 75, '\n')
 print("Gerando gráfico RottenTomatoes: Crítica vs Usuários...\n")
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 sns.scatterplot(data=all_sites,x='RottenTomatoes', y='RottenTomatoes_User')
 plt.ylim(0,100)
 plt.savefig('plots/RT_critic_vs_users.jpg')
@@ -218,7 +218,7 @@ print('-' * 75, '\n')
 print('Gerando gráfico: Distribição de Rotten_Diff...\n')
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 
 sns.histplot(
     data=all_sites,
@@ -237,7 +237,7 @@ plt.show()
 print('Gerando gráfico: Distribição Absoluta de Rotten_Diff...\n')
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 
 Abs_RT_Diff = all_sites['Rotten_Diff'].abs()
 
@@ -274,7 +274,7 @@ print('-' * 75, '\n')
 print("Gerando gráfico Metacritic: Crítica vs Usuários...\n")
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 sns.scatterplot(data=all_sites,x='Metacritic', y='Metacritic_User')
 plt.xlim(0,100)
 plt.ylim(0,10)  
@@ -286,7 +286,7 @@ plt.show()
 print("Gerando gráfico Contagem de Votos: IMDB vs MetaCritc...\n")
 print('-' * 75, '\n')
 
-plt.figure(figsize=(6.8,3.4), dpi=125)
+plt.figure(figsize=(6.8,3.4), dpi=150)
 sns.scatterplot(
     data=all_sites,
     x='Metacritic_user_vote_count', 
@@ -356,3 +356,112 @@ print('Tabela das Notas Normalizadas')
 print('-' * 75)
 print(norm_scores.head())
 print('-' * 75, '\n')
+
+
+# Função para mover a legenda 
+def move_legend(ax, new_loc, **kws):
+    old_legend = ax.legend_
+    handles = old_legend.legend_handles
+    labels = [t.get_text() for t in old_legend.get_texts()]
+    title = old_legend.get_title().get_text()
+    ax.legend(handles, labels, loc=new_loc, title=title, **kws)
+
+
+# Gráfico de comparação entre as notas normalizadas
+print('Gerando gráfico: Comparação da distribuição das notas normalizadas\n')
+print('-' * 75, '\n')
+
+fig, ax = plt.subplots(figsize=(6.8,3.4), dpi=150)
+sns.kdeplot(
+    data=norm_scores, 
+    clip=[0,5], 
+    fill=True, 
+    alpha=0.4, 
+    palette='Set1', 
+    ax=ax
+)
+
+move_legend(ax, 'upper left')
+plt.savefig('plots/comparison_normalized_ratings.jpg')
+plt.show()
+
+
+# Gráfico de comparação entre as notas normalizadas de RT e do Fandango
+print('Gerando gráfico: Comparação das notas do RT e do Fandango\n')
+print('-' * 75, '\n')
+
+fig, ax = plt.subplots(figsize=(6.8,3.4), dpi=150)
+sns.kdeplot(
+    data=norm_scores[['RT_Norm', 'STARS']], 
+    clip=[0,5], 
+    fill=True, 
+    alpha=0.4, 
+    palette='Set1', 
+    ax=ax
+)
+
+move_legend(ax, 'upper left')
+plt.savefig('plots/comparison_ratings_fandando_RT.jpg')
+plt.show()
+
+
+# Histograma de comparação entre as notas normalizadas de RT e do Fandango 
+print(
+    'Gerando gráfico (Histograma): Comparação das notas do normalizadas\n'
+)
+print('-' * 75, '\n')
+
+plt.subplots(figsize=(6.8,3.4),dpi=150)
+sns.histplot(norm_scores,bins=50)
+
+plt.savefig('plots/comparison_ratings_histplot.jpg')
+plt.show()
+
+# Mapa de cluster com todas as notas normalizadas
+print('Gerando gráfico (Cluster): Comparação das notas do normalizadas\n')
+print('-' * 75, '\n')
+
+g = sns.clustermap(norm_scores,cmap='magma',col_cluster=False)
+
+plt.setp(g.ax_heatmap.get_xticklabels(), rotation=45)
+g.savefig('plots/comparison_ratings_cluster.jpg')
+plt.show()
+
+
+# DataFrame com Notas Noremalizada e com o Nome dos Filmes
+norm_films = df_fan_sites[[
+    'STARS',
+    'RATING',
+    'RT_Norm',
+    'RTU_Norm',
+    'Meta_Norm',
+    'Meta_U_Norm',
+    'IMDB_Norm',
+    'FILM'
+]]
+
+
+print('10 Filmes mais mal Avaliados')
+print('-' * 75)
+print(norm_films.nsmallest(10,'RT_Norm'))
+print('-' * 75, '\n')
+
+
+# Gráfico de Distribuição do top 10 piores avaliados
+print('Gerando gráfico: Distribuição do top 10 piores avaliados\n')
+print('-' * 75, '\n')
+
+worst_films = norm_films.nsmallest(10,'RT_Norm').drop('FILM',axis=1)
+
+plt.subplots(figsize=(6.8,3.4), dpi=150)
+sns.kdeplot(
+    data=worst_films, 
+    clip=[0,5], 
+    fill=True, 
+    alpha=0.4, 
+    palette='Set1'
+)
+
+plt.title("Rating for RT Ceitic's 10 Worst Reviewed Films")
+plt.savefig('plots/ratings_top_10_worst_movies.jpg')
+plt.show()
